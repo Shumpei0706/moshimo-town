@@ -1,0 +1,47 @@
+{
+  "credit": "Character illustrations generated with Muse Image (Meta) for Moshimo Town. Not an official Meta character or endorsement.",
+  "generator": "scripts/generate-companion-art.mjs",
+  "reviewedAt": "2026-10-29",
+  "reviewLimitation": "Visual review found no identified third-party likeness; originality is not guaranteed and no exhaustive reverse-image clearance was performed.",
+  "assets": [
+    {
+      "file": "idle.webp",
+      "model": "muse-image-1.0",
+      "responseId": "resp_6ae29c4aa3e0b2a4827344a5",
+      "createdAt": "2026-10-29T01:07:23.357Z",
+      "sha256": "57d0cecea6939727d8586d5f550b1fbd266ea58a5964d1fcfdc04a081656cc23",
+      "bytes": 144446,
+      "input": "text only; no screenshot/reference upload",
+      "transformations": "none; original returned WebP bytes including XMP metadata retained",
+      "display": "entire image, object-fit contain; no crop",
+      "provenance": "XMP chunk retained",
+      "originalFictionalCharacter": true
+    },
+    {
+      "file": "thinking.webp",
+      "model": "muse-image-1.0",
+      "responseId": "resp_6ae29d91b7bc484fd1bc474a",
+      "createdAt": "2026-10-29T01:12:50.925Z",
+      "sha256": "f934a58d30973508146485b5f190834c8a03e459f632d328788209652eab51b1",
+      "bytes": 161020,
+      "input": "text only; no screenshot/reference upload",
+      "transformations": "none; original returned WebP bytes including XMP metadata retained",
+      "display": "entire image, object-fit contain; no crop",
+      "provenance": "XMP chunk retained",
+      "originalFictionalCharacter": true
+    },
+    {
+      "file": "happy.webp",
+      "model": "muse-image-1.0",
+      "responseId": "resp_6ae29df2b367640741ed4f03",
+      "createdAt": "2026-10-29T01:14:26.739Z",
+      "sha256": "f43398bc7c4f9e3a003a874055e57ed63e3d7b8b37b90d01ac78564cd8e5e146",
+      "bytes": 148852,
+      "input": "text only; no screenshot/reference upload",
+      "transformations": "none; original returned WebP bytes including XMP metadata retained",
+      "display": "entire image, object-fit contain; no crop",
+      "provenance": "XMP chunk retained",
+      "originalFictionalCharacter": true
+    }
+  ]
+}

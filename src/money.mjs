@@ -1,0 +1,2 @@
+export function moneySteps(run){let cursor=run.revenue;return [{key:'revenue',value:run.revenue,start:0,end:cursor},...['ingredients','labor','space','preparation'].map(key=>{const start=cursor;cursor-=run[key];return {key,value:-run[key],start,end:cursor}}),{key:'surplus',value:run.surplus,start:0,end:run.surplus}];}
+export function moneyDomain(...runs){const values=runs.flatMap(run=>moneySteps(run).flatMap(step=>[step.start,step.end]));return [Math.min(0,...values),Math.max(1,...values)];}

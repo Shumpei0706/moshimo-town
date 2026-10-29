@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.DS_Store
+# Operational state belongs outside the checkout/image.
+*.budget.json
+*.budget.json.lock/
+*.budget.json.*.tmp

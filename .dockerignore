@@ -1,0 +1,24 @@
+**
+!package.json
+!package-lock.json
+!index.html
+!vite.config.*
+!src/
+!src/**
+!public/
+!public/**
+!server/
+!server/**
+!scripts/
+!scripts/generate-notices.mjs
+
+# Defense in depth even under explicitly included source folders.
+**/.env
+**/.env.*
+**/.git
+**/node_modules
+**/*.pem
+**/*.key
+**/*.budget.json
+**/*.budget.json.lock
+**/*.tmp

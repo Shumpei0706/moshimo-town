@@ -1,0 +1,28 @@
+export const CELL_METERS=.5;
+export const FLOOR_WIDTH=10,FLOOR_HEIGHT=8;
+export const ITEM_TYPES=['cash','brew','cups','stock','pickup'];
+export const ENTRANCES={staff:{x:0,y:0},customer:{x:0,y:FLOOR_HEIGHT-1},exit:{x:FLOOR_WIDTH-1,y:FLOOR_HEIGHT-1}};
+export const defaultLayout={width:FLOOR_WIDTH,height:FLOOR_HEIGHT,items:[{id:'cash',type:'cash',x:0,y:3,rotation:0},{id:'brew',type:'brew',x:5,y:1,rotation:0},{id:'cups',type:'cups',x:2,y:1,rotation:0},{id:'stock',type:'stock',x:5,y:3,rotation:0},{id:'pickup',type:'pickup',x:3,y:4,rotation:0}]};
+export const goodLayout={width:FLOOR_WIDTH,height:FLOOR_HEIGHT,items:[{id:'cash',type:'cash',x:0,y:3,rotation:0},{id:'brew',type:'brew',x:4,y:1,rotation:180},{id:'cups',type:'cups',x:2,y:1,rotation:180},{id:'stock',type:'stock',x:0,y:1,rotation:180},{id:'pickup',type:'pickup',x:4,y:3,rotation:0}]};
+export const presets={default:defaultLayout,compact:goodLayout};
+export function itemCells(item){const width=item.rotation%180===0?2:1,height=item.rotation%180===0?1:2;return Array.from({length:width*height},(_,i)=>({x:item.x+i%width,y:item.y+Math.floor(i/width)}));}
+export function accessPoint(item,customer=false){const r=(item.rotation+(customer?180:0))%360;const w=item.rotation%180===0?2:1,h=item.rotation%180===0?1:2;return r===0?{x:item.x,y:item.y-1}:r===90?{x:item.x+w,y:item.y}:r===180?{x:item.x,y:item.y+h}:{x:item.x-1,y:item.y};}
+const key=p=>`${p.x},${p.y}`;
+export function findPath(layout,from,to){const obstacles=new Set(layout.items.flatMap(itemCells).map(key));const inside=p=>p.x>=0&&p.y>=0&&p.x<layout.width&&p.y<layout.height;if(!inside(from)||!inside(to)||obstacles.has(key(from))||obstacles.has(key(to)))throw Error('LAYOUT_UNREACHABLE');const queue=[[from]],seen=new Set([key(from)]);for(let i=0;i<queue.length;i++){const path=queue[i],p=path.at(-1);if(key(p)===key(to))return path;for(const [dx,dy]of [[1,0],[0,1],[-1,0],[0,-1]]){const n={x:p.x+dx,y:p.y+dy};if(inside(n)&&!obstacles.has(key(n))&&!seen.has(key(n))){seen.add(key(n));queue.push([...path,n])}}}throw Error('LAYOUT_UNREACHABLE');}
+export function validateLayout(layout){if(!layout||Object.keys(layout).sort().join()!=='height,items,width'||layout.width!==FLOOR_WIDTH||layout.height!==FLOOR_HEIGHT||!Array.isArray(layout.items)||layout.items.length!==5)throw Error('LAYOUT_FORMAT');const ids=new Set(),types=new Set(),occupied=new Set();for(const item of layout.items){if(!item||Object.keys(item).sort().join()!=='id,rotation,type,x,y'||typeof item.id!=='string'||item.id!==item.type||!ITEM_TYPES.includes(item.type)||ids.has(item.id)||types.has(item.type)||!Number.isInteger(item.x)||!Number.isInteger(item.y)||![0,90,180,270].includes(item.rotation))throw Error('LAYOUT_ITEM');ids.add(item.id);types.add(item.type);for(const p of itemCells(item)){if(p.x<0||p.y<0||p.x>=layout.width||p.y>=layout.height)throw Error('LAYOUT_BOUNDS');if(occupied.has(key(p)))throw Error('LAYOUT_OVERLAP');occupied.add(key(p));}}
+ for(const point of Object.values(ENTRANCES))if(occupied.has(key(point)))throw Error('LAYOUT_ENTRANCE');
+ for(const item of layout.items)findPath(layout,ENTRANCES.staff,accessPoint(item));const cash=layout.items.find(i=>i.type==='cash'),pickup=layout.items.find(i=>i.type==='pickup');findPath(layout,ENTRANCES.customer,accessPoint(cash,true));findPath(layout,accessPoint(cash,true),accessPoint(pickup,true));findPath(layout,accessPoint(pickup,true),ENTRANCES.exit);return structuredClone(layout);}
+export function moveItem(layout,id,x,y,rotation){const copy=structuredClone(layout),item=copy.items.find(i=>i.id===id);if(!item)throw Error('LAYOUT_ITEM');Object.assign(item,{x,y,...(rotation===undefined?{}:{rotation})});return validateLayout(copy);}
+export function layoutMetrics(layout){const valid=validateLayout(layout),items=Object.fromEntries(valid.items.map(i=>[i.type,i])),route=['cash','stock','cups','brew','pickup','cash'];const staffPaths=route.slice(1).map((to,i)=>({from:route[i],to,path:findPath(valid,accessPoint(items[route[i]]),accessPoint(items[to]))}));const customerPaths=[{from:'entry',to:'cash',path:findPath(valid,ENTRANCES.customer,accessPoint(items.cash,true))},{from:'cash',to:'pickup',path:findPath(valid,accessPoint(items.cash,true),accessPoint(items.pickup,true))},{from:'pickup',to:'exit',path:findPath(valid,accessPoint(items.pickup,true),ENTRANCES.exit)}];return {cellMeters:CELL_METERS,staffDistanceMeters:staffPaths.reduce((sum,p)=>sum+(p.path.length-1)*CELL_METERS,0),customerDistanceMeters:customerPaths.reduce((sum,p)=>sum+(p.path.length-1)*CELL_METERS,0),staffPaths,customerPaths,assumptions:{staffSpeedMps:.7,customerSpeedMps:1,operationSeconds:{cash:12,stock:8,cups:4,brew:45,pickup:6},corridorCollisions:false}};}
+export function rotateItem(layout,id){const item=layout.items.find(i=>i.id===id);if(!item)throw Error('LAYOUT_ITEM');return moveItem(layout,id,item.x,item.y,(item.rotation+90)%360);}
+export function itemDimensions(item){return {width:item.rotation%180===0?2:1,height:item.rotation%180===0?1:2};}
+export function validateLayoutPlan(layout,input){const result=validateLayout(layout);if(input.locks.brew){const old=input.layout.items.find(i=>i.type==='brew'),next=result.items.find(i=>i.type==='brew');if(['x','y','rotation'].some(k=>old[k]!==next[k]))throw Error('LAYOUT_BREW_LOCKED')}return result;}
+
+// Upgrade only saved browser layouts. API inputs must use the current schema.
+export function restoreLayout(layout){
+ if(layout?.width===8&&layout?.height===6&&Array.isArray(layout.items)){
+  if(layout.items.some(item=>!item||itemCells(item).some(p=>p.x<0||p.y<0||p.x>=8||p.y>=6)))throw Error('LAYOUT_BOUNDS');
+  return validateLayout({...layout,width:FLOOR_WIDTH,height:FLOOR_HEIGHT});
+ }
+ return validateLayout(layout);
+}
