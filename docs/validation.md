@@ -28,3 +28,15 @@ On `codex/submission-preparation` from `a4046f2`, server-only changes preserve t
 - No public repository push, hosting, real API usage, terms acceptance, payment action or new source-code license occurred.
 
 The source changes for this preparation do not modify `src/`, `public/` or the deterministic simulation. The 176-second focus-v2 recording remains evidence of application commit `a4046f2`; newer source adds deployment controls and documentation. The current official form was rechecked and populated without final consent or submission. Public URLs remain outstanding.
+
+## Cloudflare adapter local verification — October30
+
+On `codex/cloudflare-review`, the game engine and visible controls remain unchanged. The frontend adds only UUID replay protection and an authenticated cancellation signal. The Node4318 preview was not restarted.
+
+- 47 automated tests pass. Actual local workerd with SQLite covers full asset authentication, exact Host/Origin, separate operator authorization,8KB rejection, concurrent requests, duplicate UUIDs, completed-run persistence across runtime restart, explicit cancellation and raw disconnect quota retention. Pure SQLite tests cover crash/unknown recovery, lifetime30-slot exhaustion, early-cancel tombstones and failed-auth throttling. All provider egress in these tests is replaced by controlled fake responses, never a real Meta call.
+- `npm run build`, `wrangler deploy --dry-run` and `git diff --check` passed. Wrangler4.156.0 was installed in this checkout only. Existing large3D chunk warning remains.
+- A raw network cancellation did not always reach the DO before the next model step in the initial runtime test. The app now sends explicit authenticated cancellation; after receipt, subsequent dispatch is blocked. Already-sent provider work remains charged. The tests do not claim instantaneous transport cancellation.
+- New Miniflare requires explicit shared SQLite persistence for restart testing. Its test-only proxy restores original Host/Origin headers after Node proxy normalization; the production Worker is unchanged by that harness. Temporary runtime state is removed after tests; no second permanent preview was started.
+- Public URL rendering/CSP compatibility, account plan, real secrets and actual provider calls remain deployment-stage checks owned by the lead. This local implementation did not publish, modify accounts, read/create real secrets or invoke the Meta API.
+
+Independent security review identified an anonymous shared-auth lockout that also blocked the operator. The lead moved throttling into the failed-credential branch; valid reviewer and operator authentication remains available after anonymous failures. A workerd regression exercises 30 anonymous failures followed by reviewer access and operator status/init/disable. The independent reviewer confirmed the correction. Provider-side inference may continue after cancellation; concurrency guarantees describe this application, not Meta internal processing.

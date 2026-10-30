@@ -32,3 +32,9 @@ Live use sends the request, layout and synthetic results to Meta. Do not enter p
 - https://dev.meta.ai/docs/image-generation
 - https://dev.meta.ai/legal/terms-of-service/
 - https://dev.meta.ai/legal/acceptable-use-policy/
+
+## Cloudflare review adapter
+
+Workers uses a single named SQLite Durable Object instead of Node file storage. It starts closed; operator-only one-time initialization opens a fixed30-slot lifetime ceiling. Each experiment consumes3 slots without refunds, and each outbound dispatch awaits a durable SQL checkpoint. Global active-run/expiry/disabled checks are repeated after asynchronous work. UUID replay is rejected, including bounded cancellation tombstones. Authentication covers static assets and API; operator credentials are separate. All simulation and Meta traffic originate in the DO; the outer Worker only authenticates routing through that DO and serves approved assets. The Meta secret is read only by DO code, never client code or the asset path (Cloudflare binds secrets to the Worker environment, not independently to a class).
+
+SSE cancellation alone cannot guarantee immediate network cancellation. The frontend additionally sends an authenticated cancel message. The DO rejects further dispatch after it receives that message, while already-sent provider requests remain unknown/charged. Timeout/crash recovery never restores quota. See README for operator actions, expiry and Free-plan limitations. Neither this adapter nor its fake-fetch runtime tests establish public deployment or actual API usage.

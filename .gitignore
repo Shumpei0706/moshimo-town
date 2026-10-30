@@ -8,3 +8,7 @@ dist/
 *.budget.json
 *.budget.json.lock/
 *.budget.json.*.tmp
+
+.wrangler/
+.dev.vars
+.dev.vars.*

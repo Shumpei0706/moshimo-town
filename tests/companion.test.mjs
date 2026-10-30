@@ -18,3 +18,5 @@ test('no improving candidates complete normally after two calls and release the 
  const events=[];const out=await companionExperiment({...input,layout},{mode:'live',key:'test',fetcher:fetcherFor(),onEvent:e=>events.push(e),onCall:e=>{if(e.phase==='dispatched')lease.dispatch()}});lease.close();
  assert.deepEqual(out.plans,[]);assert.equal(out.note,'NO_IMPROVING_MOVE');assert.equal(events.filter(e=>e.stage==='model_started').length,2);assert.equal(b.status().used,2);assert.equal(b.status().remaining,1);
 });
+
+test('async durable-dispatch hook must succeed before any provider fetch',async()=>{let calls=0;await assert.rejects(companionExperiment(input,{mode:'live',key:'fake',fetcher:async()=>{calls++;throw Error('unexpected')},onCall:async record=>{if(record.phase==='dispatched'){await Promise.resolve();throw Error('API_BUDGET')}}}),/API_BUDGET/);assert.equal(calls,0)});
