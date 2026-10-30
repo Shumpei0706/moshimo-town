@@ -4,6 +4,8 @@
 
 Move five stations on a floor plan, open for one synthetic morning, then work with a Muse Spark companion to improve one station at a time. Before and after share the same visitors, arrival times, patience and clock. An isometric shop shows the actual simulation log.
 
+[Live review app](https://moshimo-town.studio-gennai1.workers.dev/) — password protected; reviewer access instructions are available separately. English is the default, with Japanese available.
+
 ## Run
 
 Node.js22.12+ (tested with24.22) and npm.
