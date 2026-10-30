@@ -10,6 +10,7 @@
   "assets": {"directory": "./dist", "binding": "ASSETS", "run_worker_first": true, "not_found_handling": "single-page-application"},
   "durable_objects": {"bindings": [{"name": "REVIEW_GATE", "class_name": "ReviewGate"}]},
   "migrations": [{"tag": "v1", "new_sqlite_classes": ["ReviewGate"]}],
-  "vars": {"PUBLIC_ORIGIN": "https://moshimo-town.studio-gennai1.workers.dev", "REVIEW_EXPIRES_AT": "2026-11-11T00:00:00+09:00"},
+  "vars": {"TURNSTILE_SITE_KEY": "0x4AAAAAAFsErSUsiuo9NI0S",
+    "PUBLIC_ORIGIN": "https://moshimo-town.studio-gennai1.workers.dev", "REVIEW_EXPIRES_AT": "2026-11-11T00:00:00+09:00"},
   "observability": {"enabled": false}
 }
